@@ -265,10 +265,8 @@ BlockInputStreams StorageMerge::createSourceStreams(const SelectQueryInfo & quer
                                                     Context & modified_context, size_t streams_num, bool has_table_virtual_column,
                                                     bool concat_streams)
 {
-    SelectQueryInfo modified_query_info;
-    modified_query_info.sets = query_info.sets;
+    SelectQueryInfo modified_query_info = query_info;
     modified_query_info.query = query_info.query->clone();
-    modified_query_info.prewhere_info = query_info.prewhere_info;
 
     VirtualColumnUtils::rewriteEntityInAst(modified_query_info.query, "_table", storage ? storage->getTableName() : "");
 
