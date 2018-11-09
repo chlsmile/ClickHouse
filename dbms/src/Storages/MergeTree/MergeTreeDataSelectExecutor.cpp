@@ -495,10 +495,9 @@ BlockInputStreams MergeTreeDataSelectExecutor::readFromParts(
                 filter_function->children.push_back(filter_function->arguments);
             }
 
-            NamesAndTypesList source_columns = available_real_columns;
             ASTPtr query = filter_function;
-            auto syntax_result = SyntaxAnalyzer(context, {}).analyze(query, source_columns);
-            filter_expression = ExpressionAnalyzer(filter_function, syntax_result, context, source_columns).getActions(false);
+            auto syntax_result = SyntaxAnalyzer(context, {}).analyze(query, available_real_columns);
+            filter_expression = ExpressionAnalyzer(filter_function, syntax_result, context).getActions(false);
 
             /// Add columns needed for `sampling_expression` to `column_names_to_read`.
             std::vector<String> add_columns = filter_expression->getRequiredColumns();
@@ -857,9 +856,8 @@ void MergeTreeDataSelectExecutor::createPositiveSignCondition(
     arguments->children.push_back(one);
 
     ASTPtr query = function;
-    NamesAndTypesList source_columns =  data.getColumns().getAllPhysical();
-    auto syntax_result = SyntaxAnalyzer(context, {}).analyze(query, source_columns);
-    out_expression = ExpressionAnalyzer(query, syntax_result, context, source_columns).getActions(false);
+    auto syntax_result = SyntaxAnalyzer(context, {}).analyze(query, data.getColumns().getAllPhysical(););
+    out_expression = ExpressionAnalyzer(query, syntax_result, context).getActions(false);
     out_column = function->getColumnName();
 }
 
